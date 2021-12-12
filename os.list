@@ -1,0 +1,94 @@
+------- FILE os.asm LEVEL 1 PASS 1
+      1  0000 ????						;;;;
+      2  0000 ????						; Vectron 65 Operating System
+      3  0000 ????						;
+      4  0000 ????						; Nick Bild
+      5  0000 ????						; nick.bild@gmail.com
+      6  0000 ????						; November 2020
+      7  0000 ????						;
+      8  0000 ????						; Reserved memory:
+      9  0000 ????						;
+     10  0000 ????						; $0000-$7EFF - RAM
+     11  0000 ????						;		$0000-$0006 - Named variables
+     12  0000 ????						;			$0020-$00D7 - Tiny Basic variables/config
+     13  0000 ????						;		$0100-$01FF - 6502 stack
+     14  0000 ????						;     $0200-$5100 - Tiny Basic user program
+     15  0000 ????						;     $5101-$5130 - Display row 1
+     16  0000 ????						;     $5201-$5230 - Display row 2
+     17  0000 ????						;     $5301-$5330 - Display row 3
+     18  0000 ????						;     $5401-$5430 - Display row 4
+     19  0000 ????						;     $5501-$5530 - Display row 5
+     20  0000 ????						;     $5601-$5630 - Display row 6
+     21  0000 ????						;     $5701-$5730 - Display row 7
+     22  0000 ????						;     $5801-$5830 - Display row 8
+     23  0000 ????						;     $5901-$5930 - Display row 9
+     24  0000 ????						;     $5A01-$5A30 - Display row 10
+     25  0000 ????						;     $5B01-$5B30 - Display row 11
+     26  0000 ????						;     $5C01-$5C30 - Display row 12
+     27  0000 ????						;     $5D01-$5D30 - Display row 13
+     28  0000 ????						;     $5E01-$5E30 - Display row 14
+     29  0000 ????						;     $5F01-$5F30 - Display row 15
+     30  0000 ????						;     $6001-$6030 - Display row 16
+     31  0000 ????						;     $6101-$6130 - Display row 17
+     32  0000 ????						;     $6201-$6230 - Display row 18
+     33  0000 ????						;     $6301-$6330 - Display row 19
+     34  0000 ????						;     $6401-$6430 - Display row 20
+     35  0000 ????						;     $6501-$6530 - Display row 21
+     36  0000 ????						;     $6601-$6630 - Display row 22
+     37  0000 ????						;     $6701-$6730 - Display row 23
+     38  0000 ????						;     $6801-$6830 - Display row 24
+     39  0000 ????						;     $6901-$6930 - Display row 25
+     40  0000 ????						;     $6A01-$6A30 - Display row 26
+     41  0000 ????						;     $6B01-$6B30 - Display row 27
+     42  0000 ????						;     $6C01-$6C30 - Display row 28
+     43  0000 ????						; $7F00 - Display Interrupt
+     44  0000 ????						; $7FE0-$7FEF - 6522 VIA (For keyboard input, AY-3-8910, SD card)
+     45  0000 ????						; $7FF0-$7FFF - 6522 VIA (For VGA display)
+     46  0000 ????						; $8000-$FFFF - ROM
+     47  0000 ????						;		$FFFA-$FFFB - NMI IRQ Vector
+     48  0000 ????						;		$FFFC-$FFFD - Reset Vector - Stores start address of this ROM.
+     49  0000 ????						;		$FFFE-$FFFF - IRQ Vector
+     50  0000 ????						;;;;
+     51  0000 ????
+     52  0000 ????				      processor	6502
+     53  0000 ????
+     54  0000 ????						; Named variables in RAM.
+     55  0000					      ORG	$0000
+     56  0000							; Keyboard
+     57  0000				   byte
+     58  0000		       00		      .byte.b	#$00
+     59  0001				   parity
+     60  0001		       00		      .byte.b	#$00
+     61  0002				   special
+     62  0002		       00		      .byte.b	#$00
+     63  0003				   lastbyte
+     64  0003		       00		      .byte.b	#$00
+     65  0004							; Display
+     66  0004				   ScreenColumn
+     67  0004		       00		      .byte.b	#$00
+     68  0005				   ScreenRow
+     69  0005		       00		      .byte.b	#$00
+     70  0006				   Temp
+     71  0006		       00		      .byte.b	#$00
+     72  0007
+     73  0007
+     74  8000				   StartExe   ORG	$8000
+     75  8000
+     76  8000
+     77  8000		       58		      cli
+     78  8001
+     79  8001				   MainLoop
+     80  8001		       4c 01 80 	      jmp	MainLoop
+     81  8004
+     82  8004
+     83  9000				   DrawTextIsr ORG	$9000
+     84  9000		       ad f0 7f 	      lda	$7FF0
+     85  9003		       8d f6 7f 	      sta	$7FF6
+     86  9006
+     87  9006		       ad f1 7f 	      lda	$7FF1
+     88  9009		       8d f6 7f 	      sta	$7FF6
+     89  900c
+     90  900c		       ad f2 7f 	      lda	$7FF2
+     91  900f		       8d f6 7f 	      sta	$7FF6
+     92  9012
+     93  9012		       40		      rti
