@@ -88,21 +88,220 @@ StartExe	ORG $8000
 
 ; Do nothing.  Just wait for an interrupt signal.
 MainLoop:
-	; Visible lines and vertical front porch.
-	lda #$18		; 24
-	sta data
-
-	jsr WriteData
-
-	; Vertical sync.
-
-	; vertical back porch
-
-
     jmp MainLoop
 
 
 SetupVGA
+	; Visible lines and vertical front porch.
+
+	; 489 * visible line.
+	ldy #$FF
+SetupVGA1
+	jsr DrawVisibleLine
+	dey
+	bne SetupVGA1
+
+	ldy #$EA
+SetupVGA2
+	jsr DrawVisibleLine
+	dey
+	bne SetupVGA2
+
+	; Vertical sync.
+	jsr VSync
+
+	; vertical back porch
+	ldy #$21
+SetupVGA3
+	jsr DrawVisibleLine
+	dey
+	bne SetupVGA3
+	
+	rts
+
+
+DrawVisibleLine
+	.byte #$DA ; phx - mnemonic unknown to DASM.
+
+	; 328 * 24;  48 * 16;  24 * 24
+	
+	lda #$18		; 24
+	sta data
+
+	ldx #$FF
+Visible1
+	jsr WriteData
+	dex
+	bne Visible1
+
+	ldx #$49
+Visible2
+	jsr WriteData
+	dex
+	bne Visible2
+
+	lda #$10		; 16
+	sta data
+
+	ldx #$30
+Visible3
+	jsr WriteData
+	dex
+	bne Visible3
+
+	lda #$18		; 24
+	sta data
+
+	ldx #$18
+Visible4
+	jsr WriteData
+	dex
+	bne Visible4
+
+	.byte #$FA ; plx
+
+	rts
+
+
+VSync
+	.byte #$DA ; phx - mnemonic unknown to DASM.
+
+	; 320 * 24;  8 * 8;  48 * 0;  24 * 8
+	
+	lda #$18		; 24
+	sta data
+
+	ldx #$FF
+VSync1
+	jsr WriteData
+	dex
+	bne VSync1
+
+	ldx #$41
+VSync2
+	jsr WriteData
+	dex
+	bne VSync2
+
+	lda #$08		; 8
+	sta data
+
+	ldx #$08
+VSync3
+	jsr WriteData
+	dex
+	bne VSync3
+
+	lda #$00		; 0
+	sta data
+
+	ldx #$30
+VSync4
+	jsr WriteData
+	dex
+	bne VSync4
+
+	lda #$08		; 8
+	sta data
+
+	ldx #$18
+VSync5
+	jsr WriteData
+	dex
+	bne VSync5
+
+
+	; 320 * 8;  8 * 8;  48 * 0;  24 * 8
+	
+	lda #$08		; 8
+	sta data
+
+	ldx #$FF
+VSync6
+	jsr WriteData
+	dex
+	bne VSync6
+
+	ldx #$41
+VSync7
+	jsr WriteData
+	dex
+	bne VSync7
+
+	lda #$08		; 8
+	sta data
+
+	ldx #$08
+VSync8
+	jsr WriteData
+	dex
+	bne VSync8
+
+	lda #$00		; 0
+	sta data
+
+	ldx #$30
+VSync9
+	jsr WriteData
+	dex
+	bne VSync9
+
+	lda #$08		; 8
+	sta data
+
+	ldx #$18
+VSync10
+	jsr WriteData
+	dex
+	bne VSync10
+
+
+	; 320 * 8;  24 * 24;  48 * 16;  8 * 24
+	
+	lda #$08		; 8
+	sta data
+
+	ldx #$FF
+VSync11
+	jsr WriteData
+	dex
+	bne VSync11
+
+	ldx #$41
+VSync12
+	jsr WriteData
+	dex
+	bne VSync12
+
+	lda #$18		; 24
+	sta data
+
+	ldx #$18
+VSync13
+	jsr WriteData
+	dex
+	bne VSync13
+
+	lda #$10		; 16
+	sta data
+
+	ldx #$30
+VSync14
+	jsr WriteData
+	dex
+	bne VSync14
+
+	lda #$18		; 24
+	sta data
+
+	ldx #$08
+VSync15
+	jsr WriteData
+	dex
+	bne VSync15
+
+	.byte #$FA ; plx
+
 	rts
 
 
@@ -152,7 +351,7 @@ WriteData
 	rts
 
 
-DrawTextIsr	ORG $9000
+DrawTextIsr	ORG $8500
 	lda $7FF0
     sta $7FF6
 
