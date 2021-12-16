@@ -76,14 +76,17 @@ StartExe	ORG $8000
 	sta addrHigh
 
 	; Set inital state of WE/CE on Vectron VGA Plus.
-	lda #$01
-	sta $7FF7				; WE (FF top)
-	sta $7FF8				; CE (FF bottom)
+	; lda #$01
+	; sta $7FF7				; WE (FF top)
+	; sta $7FF8				; CE (FF bottom)
+	lda #$03
+	sta $7FF7				; WE/CE
+	
 
 	; Write VGA signal timings for a blank screen to memory.
 	jsr SetupVGA
 
-	cli						; Enable interrupts.
+	; cli						; Enable interrupts.
 
 
 ; Do nothing.  Just wait for an interrupt signal.
@@ -122,6 +125,7 @@ SetupVGA3
 
 DrawVisibleLine
 	.byte #$DA ; phx - mnemonic unknown to DASM.
+	.byte #$5A ; phy
 
 	; 328 * 24;  48 * 16;  24 * 24
 	
@@ -157,7 +161,8 @@ Visible4
 	jsr WriteData
 	dex
 	bne Visible4
-
+ 
+	.byte #$7A ; ply
 	.byte #$FA ; plx
 
 	rts
@@ -165,6 +170,7 @@ Visible4
 
 VSync
 	.byte #$DA ; phx - mnemonic unknown to DASM.
+	.byte #$5A ; phy
 
 	; 320 * 24;  8 * 8;  48 * 0;  24 * 8
 	
@@ -300,25 +306,20 @@ VSync15
 	dex
 	bne VSync15
 
+	.byte #$7A ; ply
 	.byte #$FA ; plx
 
 	rts
 
 
 IncAddress
-	clc
-	lda  #$01
-	adc  addrLow
-	sta  addrLow
+	inc addrLow
+	bne IncAddress1
+	inc addrMid
+	bne IncAddress1
+	inc addrHigh
 
-	lda  #$00
-	adc  addrMid
-	sta  addrMid
-
-	lda  #$00
-	adc  addrHigh
-	sta  addrHigh
-
+IncAddress1
 	rts
 
 
@@ -337,13 +338,23 @@ WriteData
 	sta $7FF6
 
 	; Latch data into Vectron VGA Plus memory.
+	; lda #$00
+	; sta $7FF7				; WE (FF top)
+	; sta $7FF8				; CE (FF bottom)
+
+	; lda #$01
+	; sta $7FF8				; CE (FF bottom)
+	; sta $7FF7				; WE (FF top)
+
+	lda #$02
+	sta $7FF7				; WE low
 	lda #$00
-	sta $7FF7				; WE (FF top)
-	sta $7FF8				; CE (FF bottom)
-	; nop
-	lda #$01
-	sta $7FF7				; WE (FF top)
-	sta $7FF8				; CE (FF bottom)
+	sta $7FF7				; WE/CE low
+	
+	lda #$02
+	sta $7FF7				; WE low
+	lda #$03
+	sta $7FF7				; WE/CE high
 
 	; Increment address counter.
 	jsr IncAddress
@@ -352,13 +363,13 @@ WriteData
 
 
 DrawTextIsr	ORG $8500
-	lda $7FF0
-    sta $7FF6
+	; lda $7FF0
+    ; sta $7FF6
 
-	lda $7FF1
-    sta $7FF6
+	; lda $7FF1
+    ; sta $7FF6
 
-	lda $7FF2
-    sta $7FF6
+	; lda $7FF2
+    ; sta $7FF6
 
 	rti
