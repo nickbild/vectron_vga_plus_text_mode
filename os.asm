@@ -76,13 +76,9 @@ StartExe	ORG $8000
 	sta addrHigh
 
 	; Set inital state of WE/CE on Vectron VGA Plus.
-	; lda #$01
-	; sta $7FF7				; WE (FF top)
-	; sta $7FF8				; CE (FF bottom)
 	lda #$03
-	sta $7FF7				; WE/CE
+	sta $7FF7				; WE/CE high
 	
-
 	; Write VGA signal timings for a blank screen to memory.
 	jsr SetupVGA
 
@@ -338,14 +334,6 @@ WriteData
 	sta $7FF6
 
 	; Latch data into Vectron VGA Plus memory.
-	; lda #$00
-	; sta $7FF7				; WE (FF top)
-	; sta $7FF8				; CE (FF bottom)
-
-	; lda #$01
-	; sta $7FF8				; CE (FF bottom)
-	; sta $7FF7				; WE (FF top)
-
 	lda #$02
 	sta $7FF7				; WE low
 	lda #$00
