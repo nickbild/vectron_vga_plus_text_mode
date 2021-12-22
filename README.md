@@ -1,1 +1,3 @@
-# vectron_vga_plus_text_mode
+# Vectron VGA Plus Text Mode
+
+Coming soon!
