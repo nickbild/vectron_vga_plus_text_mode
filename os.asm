@@ -50,11 +50,11 @@ num2Mid
 		.byte #$00
 num2High
 		.byte #$00
-result2Low
+resultLow
 		.byte #$00
-result2Mid
+resultMid
 		.byte #$00
-result2High
+resultHigh
 		.byte #$00
 
 
@@ -327,15 +327,23 @@ WriteData
 	sta $7FF6
 
 	; Latch data into Vectron VGA Plus memory.
+	lda #$03
+	sta $7FF7				; WE/CE high
+	
 	lda #$02
 	sta $7FF7				; WE low
+
 	lda #$00
 	sta $7FF7				; WE/CE low
 	
 	lda #$02
 	sta $7FF7				; WE low
+
 	lda #$03
 	sta $7FF7				; WE/CE high
+
+	lda #$01
+	sta $7FF7				; CE low (read mode)
 
 	; Increment address counter.
 	jsr IncAddress
