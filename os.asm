@@ -386,24 +386,224 @@ NextAddressRow
 	rts
 
 
-DrawCharacterLine
+DrawCharacterLines
 	.byte #$DA ; phx - mnemonic unknown to DASM.
 
-	ldx #$08
-DrawCharacterLine1
-	; LDA #$08
-	; BIT FLAGS
-	; BNE Bit3IsSet
-	; BEQ Bit3isClear
+	; Get offset to first byte (horizontal line) of character in ROM.
+	ldx $7FF2
+	lda $9500,x
 
-	; TODO: set data for each pixel.
-	lda #$1F
 	sta data
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
 
 	jsr WriteData
-	dex
-	bne DrawCharacterLine1
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
 	jsr NextAddressRow
+
+	; Line 2
+	ldx $7FF2
+	lda $9600,x
+
+	sta data
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	; Line 3
+	ldx $7FF2
+	lda $9700,x
+
+	sta data
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	; Line 4
+	ldx $7FF2
+	lda $9800,x
+
+	sta data
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	; Line 5
+	ldx $7FF2
+	lda $9900,x
+
+	sta data
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	; Line 6
+	ldx $7FF2
+	lda $9A00,x
+
+	sta data
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	; Line 7
+	ldx $7FF2
+	lda $9B00,x
+
+	sta data
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	; Line 8
+	ldx $7FF2
+	lda $9C00,x
+
+	sta data
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr NextAddressRow
+
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	jsr WriteData
+	
+; 	ldx #$08
+; DrawCharacterLine1
+; 	; LDA #$08
+; 	; BIT FLAGS
+; 	; BNE Bit3IsSet
+; 	; BEQ Bit3isClear
+
+; 	; TODO: set data for each pixel.
+; 	lda #$1F
+; 	sta data
+
+; 	jsr WriteData
+; 	dex
+; 	bne DrawCharacterLine1
+	
+; 	jsr NextAddressRow
 
 	.byte #$FA ; plx
 
@@ -507,10 +707,44 @@ DrawTextIsr4
 	sta addrHigh
 	
 	; Now draw the character at this position.
-	ldx #$10
-DrawTextIsr5
-	jsr DrawCharacterLine
-	dex
-	bne DrawTextIsr5
-
+	jsr DrawCharacterLines
+	
 	rti
+
+
+;;;;
+; Character Definitions
+;;;;
+
+CharacterLines1	ORG $9500
+	.byte #$1F
+	.byte #$19
+
+CharacterLines2	ORG $9600
+	.byte #$1F
+	.byte #$1C
+
+
+CharacterLines3	ORG $9700
+	.byte #$1F
+	.byte #$19
+
+CharacterLines4	ORG $9800
+	.byte #$1F
+	.byte #$1C
+
+CharacterLines5	ORG $9900
+	.byte #$1F
+	.byte #$19
+
+CharacterLines6	ORG $9A00
+	.byte #$1F
+	.byte #$1C
+
+CharacterLines7	ORG $9B00
+	.byte #$1F
+	.byte #$19
+
+CharacterLines8	ORG $9C00
+	.byte #$1F
+	.byte #$1C
