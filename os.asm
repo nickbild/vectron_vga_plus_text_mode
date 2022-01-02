@@ -57,6 +57,26 @@ resultMid
 resultHigh
 		.byte #$00
 
+charCode
+		.byte #$00
+
+bit0
+		.byte #$00
+bit1
+		.byte #$00
+bit2
+		.byte #$00
+bit3
+		.byte #$00
+bit4
+		.byte #$00
+bit5
+		.byte #$00
+bit6
+		.byte #$00
+bit7
+		.byte #$00
+
 
 StartExe	ORG $8000
 
@@ -386,225 +406,240 @@ NextAddressRow
 	rts
 
 
+DrawOneCharacterLine
+	; Bit 0
+	lda #$01
+	bit charCode
+	bne DrawOneCharacterLine1 	; Branch if bit set to '1'
+	lda #$18
+	jmp DrawOneCharacterLine2
+DrawOneCharacterLine1
+	lda #$1F
+DrawOneCharacterLine2
+	sta data
+	sta bit0					; Precalculate for duplicate row to follow.
+	jsr WriteData
+
+	; Bit 1
+	lda #$02
+	bit charCode
+	bne DrawOneCharacterLine3 	; Branch if bit set to '1'
+	lda #$18
+	jmp DrawOneCharacterLine4
+DrawOneCharacterLine3
+	lda #$1F
+DrawOneCharacterLine4
+	sta data
+	sta bit1					; Precalculate for duplicate row to follow.
+	jsr WriteData
+
+	; Bit 2
+	lda #$04
+	bit charCode
+	bne DrawOneCharacterLine5 	; Branch if bit set to '1'
+	lda #$18
+	jmp DrawOneCharacterLine6
+DrawOneCharacterLine5
+	lda #$1F
+DrawOneCharacterLine6
+	sta data
+	sta bit2					; Precalculate for duplicate row to follow.
+	jsr WriteData
+
+	; Bit 3
+	lda #$08
+	bit charCode
+	bne DrawOneCharacterLine7 	; Branch if bit set to '1'
+	lda #$18
+	jmp DrawOneCharacterLine8
+DrawOneCharacterLine7
+	lda #$1F
+DrawOneCharacterLine8
+	sta data
+	sta bit3					; Precalculate for duplicate row to follow.
+	jsr WriteData
+
+	; Bit 4
+	lda #$10
+	bit charCode
+	bne DrawOneCharacterLine9 	; Branch if bit set to '1'
+	lda #$18
+	jmp DrawOneCharacterLine10
+DrawOneCharacterLine9
+	lda #$1F
+DrawOneCharacterLine10
+	sta data
+	sta bit4					; Precalculate for duplicate row to follow.
+	jsr WriteData
+
+	; Bit 5
+	lda #$20
+	bit charCode
+	bne DrawOneCharacterLine11 	; Branch if bit set to '1'
+	lda #$18
+	jmp DrawOneCharacterLine12
+DrawOneCharacterLine11
+	lda #$1F
+DrawOneCharacterLine12
+	sta data
+	sta bit5					; Precalculate for duplicate row to follow.
+	jsr WriteData
+
+	; Bit 6
+	lda #$40
+	bit charCode
+	bne DrawOneCharacterLine13 	; Branch if bit set to '1'
+	lda #$18
+	jmp DrawOneCharacterLine14
+DrawOneCharacterLine13
+	lda #$1F
+DrawOneCharacterLine14
+	sta data
+	sta bit6					; Precalculate for duplicate row to follow.
+	jsr WriteData
+
+	; Bit 7
+	lda #$80
+	bit charCode
+	bne DrawOneCharacterLine15 	; Branch if bit set to '1'
+	lda #$18
+	jmp DrawOneCharacterLine16
+DrawOneCharacterLine15
+	lda #$1F
+DrawOneCharacterLine16
+	sta data
+	sta bit7					; Precalculate for duplicate row to follow.
+	jsr WriteData
+
+	rts
+
+
+DrawDuplicateCharacterLine
+	lda bit0
+	sta data
+	jsr WriteData
+
+	lda bit1
+	sta data
+	jsr WriteData
+
+	lda bit2
+	sta data
+	jsr WriteData
+
+	lda bit3
+	sta data
+	jsr WriteData
+
+	lda bit4
+	sta data
+	jsr WriteData
+
+	lda bit5
+	sta data
+	jsr WriteData
+
+	lda bit6
+	sta data
+	jsr WriteData
+
+	lda bit7
+	sta data
+	jsr WriteData
+
+	rts
+
+
 DrawCharacterLines
 	.byte #$DA ; phx - mnemonic unknown to DASM.
 
-	; Get offset to first byte (horizontal line) of character in ROM.
+	; Get offset to first byte (horizontal line) of character in ROM, then retrieve character code.
 	ldx $7FF2
 	lda $9500,x
+	sta charCode
 
-	sta data
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawOneCharacterLine
 	jsr NextAddressRow
-
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	
+	jsr DrawDuplicateCharacterLine
 	jsr NextAddressRow
 
 	; Line 2
 	ldx $7FF2
 	lda $9600,x
+	sta charCode
 
-	sta data
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawOneCharacterLine
 	jsr NextAddressRow
 
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawDuplicateCharacterLine
 	jsr NextAddressRow
 
 	; Line 3
 	ldx $7FF2
 	lda $9700,x
+	sta charCode
 
-	sta data
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawOneCharacterLine
 	jsr NextAddressRow
 
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawDuplicateCharacterLine
 	jsr NextAddressRow
 
 	; Line 4
 	ldx $7FF2
 	lda $9800,x
+	sta charCode
 
-	sta data
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawOneCharacterLine
 	jsr NextAddressRow
 
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawDuplicateCharacterLine
 	jsr NextAddressRow
 
 	; Line 5
 	ldx $7FF2
 	lda $9900,x
+	sta charCode
 
-	sta data
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawOneCharacterLine
 	jsr NextAddressRow
 
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawDuplicateCharacterLine
 	jsr NextAddressRow
 
 	; Line 6
 	ldx $7FF2
 	lda $9A00,x
+	sta charCode
 
-	sta data
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawOneCharacterLine
 	jsr NextAddressRow
 
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawDuplicateCharacterLine
 	jsr NextAddressRow
 
 	; Line 7
 	ldx $7FF2
 	lda $9B00,x
+	sta charCode
 
-	sta data
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawOneCharacterLine
 	jsr NextAddressRow
 
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawDuplicateCharacterLine
 	jsr NextAddressRow
 
 	; Line 8
 	ldx $7FF2
 	lda $9C00,x
+	sta charCode
 
-	sta data
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawOneCharacterLine
 	jsr NextAddressRow
 
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
-	jsr WriteData
+	jsr DrawDuplicateCharacterLine
 	
-; 	ldx #$08
-; DrawCharacterLine1
-; 	; LDA #$08
-; 	; BIT FLAGS
-; 	; BNE Bit3IsSet
-; 	; BEQ Bit3isClear
-
-; 	; TODO: set data for each pixel.
-; 	lda #$1F
-; 	sta data
-
-; 	jsr WriteData
-; 	dex
-; 	bne DrawCharacterLine1
-	
-; 	jsr NextAddressRow
-
 	.byte #$FA ; plx
 
 	rts
@@ -612,7 +647,6 @@ DrawCharacterLines
 
 DrawTextIsr	ORG $8500
 	; Convert row and column into starting memory address.
-	; (row * 400) + col
 	; ((row * 16) * 400) + (col * 8)
 
 	; Zero the numbers to add.
@@ -717,34 +751,34 @@ DrawTextIsr4
 ;;;;
 
 CharacterLines1	ORG $9500
-	.byte #$1F
-	.byte #$19
+	.byte #$AA
+	.byte #$C1
 
 CharacterLines2	ORG $9600
-	.byte #$1F
-	.byte #$1C
+	.byte #$AA
+	.byte #$C1
 
 
 CharacterLines3	ORG $9700
-	.byte #$1F
-	.byte #$19
+	.byte #$AA
+	.byte #$C1
 
 CharacterLines4	ORG $9800
-	.byte #$1F
-	.byte #$1C
+	.byte #$AA
+	.byte #$C1
 
 CharacterLines5	ORG $9900
-	.byte #$1F
-	.byte #$19
+	.byte #$AA
+	.byte #$C1
 
 CharacterLines6	ORG $9A00
-	.byte #$1F
-	.byte #$1C
+	.byte #$AA
+	.byte #$C1
 
 CharacterLines7	ORG $9B00
-	.byte #$1F
-	.byte #$19
+	.byte #$AA
+	.byte #$C3
 
 CharacterLines8	ORG $9C00
-	.byte #$1F
-	.byte #$1C
+	.byte #$AA
+	.byte #$C1
