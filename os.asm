@@ -759,7 +759,7 @@ CharacterLines1	ORG $9500
 	.byte #%00000000
 	.byte #%00011000
 	.byte #%01100110
-	.byte #%01100110
+	.byte #%00100100
 	.byte #%00011000
 	.byte #%00000000
 	.byte #%00000000
@@ -819,12 +819,12 @@ CharacterLines1	ORG $9500
 	.byte #%01100011
 	.byte #%01000001
 	.byte #%00110011
+	.byte #%00111111
 	.byte #%00000000
 	.byte #%00000000
 	.byte #%00000000
 	.byte #%00000000
-	.byte #%00000000
-	.byte #%11111110
+	.byte #%01111111
 
 CharacterLines2	ORG $9600
 
@@ -835,7 +835,7 @@ CharacterLines2	ORG $9600
 	.byte #%00000000
 	.byte #%00011000
 	.byte #%01100110
-	.byte #%01100110
+	.byte #%00100100
 	.byte #%01111110
 	.byte #%01100011
 	.byte #%00000000
@@ -895,12 +895,12 @@ CharacterLines2	ORG $9600
 	.byte #%01100011
 	.byte #%01100011
 	.byte #%00110011
-	.byte #%00111111
+	.byte #%00110000
 	.byte #%00000000
 	.byte #%00000000
 	.byte #%00000000
 	.byte #%00000000
-	.byte #%11111110
+	.byte #%01111111
 
 CharacterLines3	ORG $9700
 
@@ -911,7 +911,7 @@ CharacterLines3	ORG $9700
 	.byte #%00000000
 	.byte #%00011000
 	.byte #%01100110
-	.byte #%11111111
+	.byte #%01111110
 	.byte #%00000011
 	.byte #%00110011
 	.byte #%00000000
@@ -976,7 +976,7 @@ CharacterLines3	ORG $9700
 	.byte #%00000000
 	.byte #%00000000
 	.byte #%00000000
-	.byte #%11111110
+	.byte #%01111111
 
 CharacterLines4	ORG $9800
 
@@ -987,7 +987,7 @@ CharacterLines4	ORG $9800
 	.byte #%00000000
 	.byte #%00011000
 	.byte #%00000000
-	.byte #%01100110
+	.byte #%00100100
 	.byte #%00111110
 	.byte #%00011000
 	.byte #%00000000
@@ -1052,7 +1052,7 @@ CharacterLines4	ORG $9800
 	.byte #%00000000
 	.byte #%00000000
 	.byte #%00000000
-	.byte #%11111110
+	.byte #%01111111
 
 CharacterLines5	ORG $9900
 
@@ -1063,7 +1063,7 @@ CharacterLines5	ORG $9900
 	.byte #%00000000
 	.byte #%00011000
 	.byte #%00000000
-	.byte #%11111111
+	.byte #%01111110
 	.byte #%01100000
 	.byte #%00001100
 	.byte #%00000000
@@ -1128,7 +1128,7 @@ CharacterLines5	ORG $9900
 	.byte #%00000000
 	.byte #%00000000
 	.byte #%00000000
-	.byte #%11111110
+	.byte #%01111111
 
 CharacterLines6	ORG $9A00
 
@@ -1139,7 +1139,7 @@ CharacterLines6	ORG $9A00
 	.byte #%00000000
 	.byte #%00000000
 	.byte #%00000000
-	.byte #%01100110
+	.byte #%00100100
 	.byte #%00111111
 	.byte #%01100110
 	.byte #%00000000
@@ -1204,7 +1204,7 @@ CharacterLines6	ORG $9A00
 	.byte #%00000000
 	.byte #%00000000
 	.byte #%00000000
-	.byte #%11111110
+	.byte #%01111111
 
 CharacterLines7	ORG $9B00
 
@@ -1215,7 +1215,7 @@ CharacterLines7	ORG $9B00
 	.byte #%00000000
 	.byte #%00011000
 	.byte #%00000000
-	.byte #%01100110
+	.byte #%00100100
 	.byte #%00011000
 	.byte #%01100011
 	.byte #%00000000
@@ -1224,10 +1224,10 @@ CharacterLines7	ORG $9B00
 	.byte #%00001100
 	.byte #%00000000
 	.byte #%00011000
-	.byte #%00110000
+	.byte #%00001100
 	.byte #%00000000
 	.byte #%00011000
-	.byte #%00000011
+	.byte #%00000110
 	.byte #%00111110
 	.byte #%00111111
 	.byte #%01111111
@@ -1280,7 +1280,7 @@ CharacterLines7	ORG $9B00
 	.byte #%00000000
 	.byte #%00000000
 	.byte #%00000000
-	.byte #%11111110
+	.byte #%01111111
 
 CharacterLines8	ORG $9C00
 
