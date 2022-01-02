@@ -347,9 +347,6 @@ WriteData
 	sta $7FF6
 
 	; Latch data into Vectron VGA Plus memory.
-	lda #$03
-	sta $7FF7				; WE/CE high
-	
 	lda #$02
 	sta $7FF7				; WE low
 
@@ -361,9 +358,6 @@ WriteData
 
 	lda #$03
 	sta $7FF7				; WE/CE high
-
-	lda #$01
-	sta $7FF7				; CE low (read mode)
 
 	; Increment address counter.
 	jsr IncAddress
@@ -646,6 +640,9 @@ DrawCharacterLines
 
 
 DrawTextIsr	ORG $8500
+	lda #$03
+	sta $7FF7				; WE/CE high
+	
 	; Convert row and column into starting memory address.
 	; ((row * 16) * 400) + (col * 8)
 
@@ -742,6 +739,9 @@ DrawTextIsr4
 	
 	; Now draw the character at this position.
 	jsr DrawCharacterLines
+
+	lda #$01
+	sta $7FF7				; CE low (read mode)
 	
 	rti
 
