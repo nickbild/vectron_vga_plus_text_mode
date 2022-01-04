@@ -20,6 +20,8 @@
 ;			$7FF6 - Data output: RAM Value
 ;			$7FF7 - Data output: WE/CE
 ; $8000-$FFFF - ROM
+;		$8500		- IRQ Handler
+;		$9500-$9CFF - Character Data
 ; 		$FFFA-$FFFB - NMI IRQ Vector
 ; 		$FFFC-$FFFD - Reset Vector - Stores start address of this ROM.
 ; 		$FFFE-$FFFF - IRQ Vector
