@@ -10,7 +10,7 @@ Vectron VGA Plus Text Mode accepts row, column, and character codes into 8-bit f
 
 To write a single 8x8 character to the screen without Text Mode would require writing 64 individual pixels, and performing all of the associated instructions and data transformations.  This would keep a typical 6502 computer pretty busy just writing to the screen, not to mention all of the other things the computer needs to do.  Text Mode allows for the same result with just a few instructions from the interfacing device.
 
-At the heart of the design is a 65C02 processor to handle the somewhat complex calculations that would be difficult to perform with only logic chips, and would require a high part count.  I think using a microprocessor in this board is well within the bounds of acceptable for a pure retro computing device, considering that the Commodore 1541 disk drive, for example, also had its own 6502 to handle processing.
+At the heart of the design is a 65C02 processor to handle the somewhat complex calculations that would be difficult to perform with only logic chips, and would require a high part count.  I think using a microprocessor in this board is well within the bounds of being acceptable for a pure retro computing device, considering that the Commodore 1541 disk drive, for example, also had its own 6502 to handle processing.
 
 An Arudino sketch that can be used to write characters using Text Mode [is here](https://github.com/nickbild/vectron_vga_plus_text_mode/tree/main/ardunio_tester).  KiCad design files are [available here](https://github.com/nickbild/vectron_vga_plus_text_mode/tree/main/kicad).  You will also need a [Vectron VGA Plus](https://github.com/nickbild/vectron_vga_plus) VGA adapter, which Text Mode was designed to work with.
 
