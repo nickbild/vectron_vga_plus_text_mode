@@ -12,7 +12,7 @@ Vectron VGA Plus Text Mode:
 
 ![](https://raw.githubusercontent.com/nickbild/vectron_vga_plus_text_mode/main/media/text_mode_sm.jpg)
 
-Vectron VGA Plus Text Mode attached to Vectron VGA Plus, with an Arduino Mega 2560 requesting characters to be written:
+Vectron VGA Plus Text Mode attached to Vectron VGA Plus, with an Arduino Mega 2560 requesting the characters to be written on screen:
 
 ![](https://raw.githubusercontent.com/nickbild/vectron_vga_plus_text_mode/main/media/full_setup_w_arduino_angle_sm.jpg)
 
