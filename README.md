@@ -32,6 +32,22 @@ Breadboard prototype (with a few components removed to place on the PCB):
 
 ## Bill of Materials
 
+- 1 x WDC 65C02 processor
+- 1 x AS6C62256A-70PCN 32KB RAM
+- 1 x AT28C256-15PU 32KB ROM
+- 1 x 8 MHz oscillator
+- 4 x 3.3k ohm resistors
+- 2 x 220 uF capacitors
+- 1 x push button
+- 2 x 7432
+- 1 x 7408
+- 1 x 7404
+- 2 x 74682
+- 1 x 74154
+- 8 x 74374
+- Female headers
+- PCB ([KiCad design files](https://github.com/nickbild/vectron_vga_plus_text_mode/tree/main/kicad))
+
 ## About the Author
 
 [Nick A. Bild, MS](https://nickbild79.firebaseapp.com/#!/)
