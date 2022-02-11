@@ -26,7 +26,7 @@ Text mode interface:
 
 ![](https://raw.githubusercontent.com/nickbild/vectron_vga_plus_text_mode/main/media/screenshot_prompt_sm.jpg)
 
-Breadboard prototype:
+Breadboard prototype (with a few components removed to place on the PCB):
 
 ![](https://raw.githubusercontent.com/nickbild/vectron_vga_plus_text_mode/main/media/breadboard_prototype_sm.jpg)
 
