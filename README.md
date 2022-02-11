@@ -1,6 +1,6 @@
 # Vectron VGA Plus Text Mode
 
-Vectron VGA Plus Text Mode simplifes displaying text with retro computers and microcontrollers by hiding the pixel-level details.  Supply only row and column positions, and an ASCII character code, to write text to a 40x30 character VGA display.
+Vectron VGA Plus Text Mode simplifies displaying text with retro computers and microcontrollers by hiding the pixel-level details.  Supply only row and column positions, and an ASCII character code, to write text to a 40x30 character VGA display.
 
 ![](https://raw.githubusercontent.com/nickbild/vectron_vga_plus_text_mode/main/media/text_mode_angle_sm.jpg)
 
