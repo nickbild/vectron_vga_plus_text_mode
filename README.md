@@ -12,7 +12,7 @@ To write a single 8x8 character to the screen without Text Mode would require wr
 
 At the heart of the design is a 65C02 processor to handle the somewhat complex calculations that would be difficult to perform with only logic chips, and would require a high part count.  I think using a microprocessor in this board is well within the bounds of acceptable for a pure retro computing device, considering that the Commodore 1541 disk drive, for example, also had its own 6502 to handle processing.
 
-An Arudino sketch that can be used to write characters using Text Mode [is here](https://github.com/nickbild/vectron_vga_plus_text_mode/tree/main/ardunio_tester).
+An Arudino sketch that can be used to write characters using Text Mode [is here](https://github.com/nickbild/vectron_vga_plus_text_mode/tree/main/ardunio_tester).  KiCad design files are [available here](https://github.com/nickbild/vectron_vga_plus_text_mode/tree/main/kicad).
 
 ## Media
 
