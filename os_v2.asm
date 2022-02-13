@@ -82,6 +82,8 @@ bit7
 
 stp
 		.byte #$00
+stpWorking
+		.byte #$00
 
 		ORG $00C0
 StackRow
@@ -125,6 +127,7 @@ MainLoop:
 	beq MainLoop
 
 	ldx stp
+	stx stpWorking
 	lda StackRow,x
 
 	; If the character has already been marked as processed, remove it from the stack.
@@ -139,20 +142,21 @@ MainLoop1
 	cli
 
 	; Store row, col, and char to flip flop registers.
-	sta $FFF0
+	sta $7FF0
 
 	lda StackCol,x
-	sta $FFF1
+	sta $7FF1
 
 	lda StackChar,x
-	sta $FFF2
-
-	; Mark this character as having been processed, so it can be removed on a subsequent loop.
-	lda #$FF
-	sta StackRow,x
+	sta $7FF2
 
 	; Write character to screen.
 	jsr DrawTextIsr
+
+	; Mark this character as having been processed, so it can be removed on a subsequent loop.
+	ldx stpWorking
+	lda #$FF
+	sta StackRow,x
 
     jmp MainLoop
 
@@ -802,23 +806,23 @@ DrawTextIsr4
 
 RecordKeyPressIsr	ORG $8500
 	pha
-	.byte #$DA ; phx
-	.byte #$5A ; phy
+	.byte #$DA 	; phx
+	.byte #$5A 	; phy
 
 	inc stp		; stack pointer for character data
 	ldx stp
 
-	lda $FFF0	; row
+	lda $7FF0	; row
 	sta StackRow,x
 
-	lda $FFF1	; column
+	lda $7FF1	; column
 	sta StackCol,x
 
-	lda $FFF2	; character code
+	lda $7FF2	; character code
 	sta StackChar,x
 
-	.byte #$7A ; ply
-	.byte #$FA ; plx
+	.byte #$7A 	; ply
+	.byte #$FA 	; plx
 	pla
 
 	rti
