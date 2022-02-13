@@ -9,6 +9,7 @@
 ;
 ; $0000-$7EFF - RAM
 ; 		$0000-$000A - Named variables
+;		$00C0-$00EF - Key press stack
 ; 		$0100-$01FF - 6502 stack
 ;		$7FF0-$7FFF - 16-bit Decoder
 ;			$7FF0 - Data input: Row
