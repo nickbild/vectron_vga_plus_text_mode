@@ -1,14 +1,16 @@
 ;;;;
 ; Vectron VGA Plus Text Mode
 ;
+; v2.0 - implement stack to minimize interrupt handling time.
+;
 ; Nick Bild
 ; nick.bild@gmail.com
-; December 2021
+; February 2022
 ;
 ; Reserved memory:
 ;
 ; $0000-$7EFF - RAM
-; 		$0000-$000A - Named variables
+; 		$0000-$0017 - Named variables
 ;		$00C0-$00EF - Key press stack
 ; 		$0100-$01FF - 6502 stack
 ;		$7FF0-$7FFF - 16-bit Decoder
@@ -140,15 +142,6 @@ MainLoop:
 	jmp MainLoop
 MainLoop1
 	cli
-
-	; Store row, col, and char to flip flop registers.
-	sta $7FF0
-
-	lda StackCol,x
-	sta $7FF1
-
-	lda StackChar,x
-	sta $7FF2
 
 	; Write character to screen.
 	jsr DrawTextIsr
@@ -606,7 +599,8 @@ DrawCharacterLines
 	.byte #$DA ; phx - mnemonic unknown to DASM.
 
 	; Get offset to first byte (horizontal line) of character in ROM, then retrieve character code.
-	ldx $7FF2
+	ldy stpWorking
+	ldx StackChar,y
 	lda $9500,x
 	sta charCode
 
@@ -617,7 +611,8 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 2
-	ldx $7FF2
+	ldy stpWorking
+	ldx StackChar,y
 	lda $9600,x
 	sta charCode
 
@@ -628,7 +623,8 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 3
-	ldx $7FF2
+	ldy stpWorking
+	ldx StackChar,y
 	lda $9700,x
 	sta charCode
 
@@ -639,7 +635,8 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 4
-	ldx $7FF2
+	ldy stpWorking
+	ldx StackChar,y
 	lda $9800,x
 	sta charCode
 
@@ -650,7 +647,8 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 5
-	ldx $7FF2
+	ldy stpWorking
+	ldx StackChar,y
 	lda $9900,x
 	sta charCode
 
@@ -661,7 +659,8 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 6
-	ldx $7FF2
+	ldy stpWorking
+	ldx StackChar,y
 	lda $9A00,x
 	sta charCode
 
@@ -672,7 +671,8 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 7
-	ldx $7FF2
+	ldy stpWorking
+	ldx StackChar,y
 	lda $9B00,x
 	sta charCode
 
@@ -683,7 +683,8 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 8
-	ldx $7FF2
+	ldy stpWorking
+	ldx StackChar,y
 	lda $9C00,x
 	sta charCode
 
@@ -714,7 +715,8 @@ DrawTextIsr
 	sta num2High
 
 	; Load row value to memory, multiply by 16.
-	lda $7FF0
+	ldx stpWorking
+	lda StackRow,x
 	sta num2Low
 	
 	ldx #$10
@@ -768,7 +770,8 @@ DrawTextIsr3
 	sta num2High
 	
 	; Load the column value into memory.
-	lda $7FF1
+	ldx stpWorking
+	lda StackCol,x
 	sta num2Low
 
 	; Multiply column value by 8.
