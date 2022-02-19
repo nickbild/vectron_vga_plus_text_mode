@@ -82,21 +82,6 @@ bit6
 bit7
 		.byte #$00
 
-stp
-		.byte #$00
-stpWorking
-		.byte #$00
-
-		ORG $00C0
-StackRow
-		.byte #$00
-		ORG $00D0
-StackCol
-		.byte #$00
-		ORG $00E0
-StackChar
-		.byte #$00
-
 
 StartExe	ORG $8000
 
@@ -115,42 +100,11 @@ StartExe	ORG $8000
 	; Write VGA signal timings for a blank screen to memory.
 	jsr SetupVGA
 
-	; Set character stack pointer.
-	lda #$00
-	sta stp
-
 	cli						; Enable interrupts.
 
 
+; Do nothing - wait for an interrupt.
 MainLoop:
-	; Only continue if something is on the stack.
-	lda #$00
-	cmp stp
-	beq MainLoop
-
-	ldx stp
-	stx stpWorking
-	lda StackRow,x
-
-	; If the character has already been marked as processed, remove it from the stack.
-	; Disable interrupts for this critical portion.
-	sei
-	cmp #$FF
-	bne MainLoop1
-	dec stp
-	cli
-	jmp MainLoop
-MainLoop1
-	cli
-
-	; Write character to screen.
-	jsr DrawTextIsr
-
-	; Mark this character as having been processed, so it can be removed on a subsequent loop.
-	ldx stpWorking
-	lda #$FF
-	sta StackRow,x
-
     jmp MainLoop
 
 
@@ -598,9 +552,10 @@ DrawDuplicateCharacterLine
 DrawCharacterLines
 	.byte #$DA ; phx - mnemonic unknown to DASM.
 
+	; Get requested character.
+	ldx $7FF2
+
 	; Get offset to first byte (horizontal line) of character in ROM, then retrieve character code.
-	ldy stpWorking
-	ldx StackChar,y
 	lda $9500,x
 	sta charCode
 
@@ -611,8 +566,6 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 2
-	ldy stpWorking
-	ldx StackChar,y
 	lda $9600,x
 	sta charCode
 
@@ -623,8 +576,6 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 3
-	ldy stpWorking
-	ldx StackChar,y
 	lda $9700,x
 	sta charCode
 
@@ -635,8 +586,6 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 4
-	ldy stpWorking
-	ldx StackChar,y
 	lda $9800,x
 	sta charCode
 
@@ -647,8 +596,6 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 5
-	ldy stpWorking
-	ldx StackChar,y
 	lda $9900,x
 	sta charCode
 
@@ -659,8 +606,6 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 6
-	ldy stpWorking
-	ldx StackChar,y
 	lda $9A00,x
 	sta charCode
 
@@ -671,8 +616,6 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 7
-	ldy stpWorking
-	ldx StackChar,y
 	lda $9B00,x
 	sta charCode
 
@@ -683,8 +626,6 @@ DrawCharacterLines
 	jsr NextAddressRow
 
 	; Line 8
-	ldy stpWorking
-	ldx StackChar,y
 	lda $9C00,x
 	sta charCode
 
@@ -698,25 +639,20 @@ DrawCharacterLines
 	rts
 
 
-DrawTextIsr
+DrawTextIsr		ORG $8500
 	lda #$03
 	sta $7FF7				; WE/CE high
 	
 	; Convert row and column into starting memory address.
 	; ((row * 16) * 400) + (col * 8)
 
-	; Zero the numbers to add.
+	; Zero the numbers to multiply.
 	lda #$00
-	sta num1Low
 	sta num1Mid
 	sta num1High
-	sta num2Low
-	sta num2Mid
-	sta num2High
 
 	; Load row value to memory, multiply by 16.
-	ldx stpWorking
-	lda StackRow,x
+	lda $7FF0
 	sta num1Low
 
 	clc
@@ -829,45 +765,28 @@ DrawTextIsr
 	; Add this to the *384 result to get *400.
 	jsr Add24BitNumbers
 
-
-	; Save result thus far.
-	lda num1Low
-	sta resultLow
-	lda num1Mid
-	sta resultMid
-	lda num1High
-	sta resultHigh
-
-	; Add the column value to memory.
+	;;; Add the column value to memory.
 	
 	; Zero the numbers to add.
 	lda #$00
-	sta num1Low
-	sta num1Mid
-	sta num1High
-	sta num2Low
 	sta num2Mid
 	sta num2High
 	
 	; Load the column value into memory.
-	ldx stpWorking
-	lda StackCol,x
+	lda $7FF1
 	sta num2Low
 
 	; Multiply column value by 8.
-	ldx #$08
-DrawTextIsr4
-	jsr Add24BitNumbers
-	dex
-	bne DrawTextIsr4
-
-	; Add column offset to previously saved value.
-	lda resultLow
-	sta num2Low
-	lda resultMid
-	sta num2Mid
-	lda resultHigh
-	sta num2High
+	clc
+	asl num2Low		; x2
+	rol num2Mid
+	rol num2High
+	asl num2Low		; x4
+	rol num2Mid
+	rol num2High
+	asl num2Low		; x8
+	rol num2Mid
+	rol num2High
 
 	jsr Add24BitNumbers	; After this point, the starting address is stored in num1...
 
@@ -884,30 +803,6 @@ DrawTextIsr4
 	lda #$01
 	sta $7FF7				; CE low (read mode)
 	
-	rts
-
-
-RecordKeyPressIsr	ORG $8500
-	pha
-	.byte #$DA 	; phx
-	.byte #$5A 	; phy
-
-	inc stp		; stack pointer for character data
-	ldx stp
-
-	lda $7FF0	; row
-	sta StackRow,x
-
-	lda $7FF1	; column
-	sta StackCol,x
-
-	lda $7FF2	; character code
-	sta StackChar,x
-
-	.byte #$7A 	; ply
-	.byte #$FA 	; plx
-	pla
-
 	rti
 
 
