@@ -82,10 +82,35 @@ bit6
 bit7
 		.byte #$00
 
+SaveRow
+		.byte #$00
+SaveCol
+		.byte #$00
+SaveChar
+		.byte #$00		
+
 
 StartExe	ORG $8000
 
 	sei						; Disable interrupts.
+
+	; Write blank VGA signal to both RAM chips.
+
+	; Set Vectron VGA Plus memory counter to 0.
+	lda #$00
+	sta addrLow
+	sta addrMid
+	sta addrHigh
+
+	; Set inital state of WE/CE on Vectron VGA Plus.
+	lda #$03
+	sta $7FF7				; WE/CE high
+	
+	; Write VGA signal timings for a blank screen to memory.
+	jsr SetupVGA
+
+	lda #$01
+	sta $7FF7				; CE low (read mode)
 
 	; Set Vectron VGA Plus memory counter to 0.
 	lda #$00
@@ -553,7 +578,7 @@ DrawCharacterLines
 	.byte #$DA ; phx - mnemonic unknown to DASM.
 
 	; Get requested character.
-	ldx $7FF2
+	ldx SaveChar
 
 	; Get offset to first byte (horizontal line) of character in ROM, then retrieve character code.
 	lda $9500,x
@@ -640,6 +665,22 @@ DrawCharacterLines
 
 
 DrawTextIsr		ORG $8500
+	; Ensure inputs are consistent across both writes.
+	lda $7FF0
+	sta SaveRow
+	lda $7FF1
+	sta SaveCol
+	lda $7FF2
+	sta SaveChar
+
+	; Draw twice to support Vectron VGA Plus v2.0.
+	jsr DrawText
+	jsr DrawText
+
+	rti
+
+
+DrawText
 	lda #$03
 	sta $7FF7				; WE/CE high
 	
@@ -652,7 +693,7 @@ DrawTextIsr		ORG $8500
 	sta num1High
 
 	; Load row value to memory, multiply by 16.
-	lda $7FF0
+	lda SaveRow
 	sta num1Low
 
 	clc
@@ -773,7 +814,7 @@ DrawTextIsr		ORG $8500
 	sta num2High
 	
 	; Load the column value into memory.
-	lda $7FF1
+	lda SaveCol
 	sta num2Low
 
 	; Multiply column value by 8.
@@ -803,7 +844,7 @@ DrawTextIsr		ORG $8500
 	lda #$01
 	sta $7FF7				; CE low (read mode)
 	
-	rti
+	rts
 
 
 ;;;;
