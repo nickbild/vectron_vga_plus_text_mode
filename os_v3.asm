@@ -125,6 +125,9 @@ StartExe	ORG $8000
 	; Write VGA signal timings for a blank screen to memory.
 	jsr SetupVGA
 
+	lda #$01
+	sta $7FF7				; CE low (read mode)
+
 	cli						; Enable interrupts.
 
 
@@ -158,6 +161,16 @@ SetupVGA3
 	jsr DrawVisibleLine
 	dey
 	bne SetupVGA3
+
+	; Finish last row.
+	lda #$18		; 24
+	sta data
+
+	ldy #$10
+SetupVGA4
+	jsr WriteData
+	dey
+	bne SetupVGA4
 	
 	rts
 
@@ -301,7 +314,7 @@ VSync10
 	bne VSync10
 
 
-	; 320 * 8;  24 * 24;  48 * 16;  8 * 24
+	; 320 * 8;  8 * 24;  48 * 16;  24 * 24
 	
 	lda #$08		; 8
 	sta data
@@ -321,7 +334,7 @@ VSync12
 	lda #$18		; 24
 	sta data
 
-	ldx #$18
+	ldx #$08
 VSync13
 	jsr WriteData
 	dex
@@ -339,7 +352,7 @@ VSync14
 	lda #$18		; 24
 	sta data
 
-	ldx #$08
+	ldx #$18
 VSync15
 	jsr WriteData
 	dex
