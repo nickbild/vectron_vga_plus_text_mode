@@ -89,6 +89,12 @@ SaveCol
 SaveChar
 		.byte #$00		
 
+addrLowSave
+		.byte #$00
+addrMidSave
+		.byte #$00
+addrHighSave
+		.byte #$00
 
 StartExe	ORG $8000
 
@@ -688,7 +694,20 @@ DrawTextIsr		ORG $8500
 
 	; Draw twice to support Vectron VGA Plus v2.0.
 	jsr DrawText
-	jsr DrawText
+	
+	; Address has already been calculated on the first write,
+	; so retrieve that value and skip code that calculates it.
+	lda #$03
+	sta $7FF7				; WE/CE high
+
+	lda addrLowSave
+	sta addrLow
+	lda addrMidSave
+	sta addrMid
+	lda addrHighSave
+	sta addrHigh
+
+	jsr DrawText2
 
 	rti
 
@@ -846,11 +865,15 @@ DrawText
 
 	lda num1Low
 	sta addrLow
+	sta addrLowSave
 	lda num1Mid
 	sta addrMid
+	sta addrMidSave
 	lda num1High
 	sta addrHigh
-	
+	sta addrHighSave
+
+DrawText2	
 	; Now draw the character at this position.
 	jsr DrawCharacterLines
 
