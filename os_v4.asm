@@ -174,7 +174,7 @@ SetupVGA3
 
 	ldy #$10
 SetupVGA4
-	jsr WriteData
+	jsr WriteDataInit
 	dey
 	bne SetupVGA4
 	
@@ -192,13 +192,13 @@ DrawVisibleLine
 
 	ldx #$FF
 Visible1
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne Visible1
 
 	ldx #$49
 Visible2
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne Visible2
 
@@ -207,7 +207,7 @@ Visible2
 
 	ldx #$30
 Visible3
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne Visible3
 
@@ -216,7 +216,7 @@ Visible3
 
 	ldx #$18
 Visible4
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne Visible4
  
@@ -237,13 +237,13 @@ VSync
 
 	ldx #$FF
 VSync1
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync1
 
 	ldx #$41
 VSync2
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync2
 
@@ -252,7 +252,7 @@ VSync2
 
 	ldx #$08
 VSync3
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync3
 
@@ -261,7 +261,7 @@ VSync3
 
 	ldx #$30
 VSync4
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync4
 
@@ -270,7 +270,7 @@ VSync4
 
 	ldx #$18
 VSync5
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync5
 
@@ -282,13 +282,13 @@ VSync5
 
 	ldx #$FF
 VSync6
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync6
 
 	ldx #$41
 VSync7
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync7
 
@@ -297,7 +297,7 @@ VSync7
 
 	ldx #$08
 VSync8
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync8
 
@@ -306,7 +306,7 @@ VSync8
 
 	ldx #$30
 VSync9
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync9
 
@@ -315,7 +315,7 @@ VSync9
 
 	ldx #$18
 VSync10
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync10
 
@@ -327,13 +327,13 @@ VSync10
 
 	ldx #$FF
 VSync11
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync11
 
 	ldx #$41
 VSync12
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync12
 
@@ -342,7 +342,7 @@ VSync12
 
 	ldx #$08
 VSync13
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync13
 
@@ -351,7 +351,7 @@ VSync13
 
 	ldx #$30
 VSync14
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync14
 
@@ -360,7 +360,7 @@ VSync14
 
 	ldx #$18
 VSync15
-	jsr WriteData
+	jsr WriteDataInit
 	dex
 	bne VSync15
 
@@ -370,7 +370,8 @@ VSync15
 	rts
 
 
-WriteData
+; This version requires the data value to be stored at 'data'.
+WriteDataInit
 	; Set up the address and data output flip flops.
 	lda addrLow
 	sta $7FF3
@@ -383,6 +384,46 @@ WriteData
 
 	lda data
 	sta $7FF6
+
+	; Latch data into Vectron VGA Plus memory.
+	lda #$02
+	sta $7FF7				; WE low
+
+	lda #$00
+	sta $7FF7				; WE/CE low
+	
+	lda #$02
+	sta $7FF7				; WE low
+
+	lda #$03
+	sta $7FF7				; WE/CE high
+
+	; Increment address counter.
+	inc addrLow
+	bne IncAddress1Init
+	inc addrMid
+	bne IncAddress1Init
+	inc addrHigh
+IncAddress1Init
+
+	rts
+
+
+; This version requires the data value to be in the accumulator.
+WriteData
+	; Set up the address and data output flip flops.
+
+	; Accumulator has data value when this sub is called.
+	sta $7FF6
+
+	lda addrLow
+	sta $7FF3
+
+	lda addrMid
+	sta $7FF4
+
+	lda addrHigh
+	sta $7FF5
 
 	; Latch data into Vectron VGA Plus memory.
 	lda #$02
@@ -453,426 +494,298 @@ DrawCharacterLines
 
 	; Line 1
 	lda $9500,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $9D00,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $A500,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $AD00,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $B500,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $BD00,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $C500,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $CD00,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	lda $9500,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $9D00,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $A500,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $AD00,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $B500,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $BD00,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $C500,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $CD00,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 	
 
 	; Line 2
 	lda $9600,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $9E00,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $A600,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $AE00,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $B600,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $BE00,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $C600,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $CE00,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	lda $9600,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $9E00,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $A600,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $AE00,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $B600,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $BE00,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $C600,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $CE00,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	; Line 3
 	lda $9700,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $9F00,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $A700,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $AF00,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $B700,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $BF00,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $C700,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $CF00,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	lda $9700,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $9F00,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $A700,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $AF00,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $B700,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $BF00,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $C700,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $CF00,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	; Line 4
 	lda $9800,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $A000,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $A800,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $B000,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $B800,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $C000,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $C800,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $D000,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	lda $9800,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $A000,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $A800,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $B000,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $B800,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $C000,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $C800,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $D000,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	; Line 5
 	lda $9900,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $A100,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $A900,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $B100,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $B900,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $C100,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $C900,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $D100,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	lda $9900,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $A100,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $A900,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $B100,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $B900,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $C100,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $C900,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $D100,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	; Line 6
 	lda $9A00,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $A200,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $AA00,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $B200,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $BA00,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $C200,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $CA00,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $D200,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	lda $9A00,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $A200,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $AA00,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $B200,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $BA00,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $C200,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $CA00,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $D200,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	; Line 7
 	lda $9B00,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $A300,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $AB00,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $B300,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $BB00,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $C300,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $CB00,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $D300,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	lda $9B00,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $A300,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $AB00,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $B300,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $BB00,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $C300,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $CB00,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $D300,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	; Line 8
 	lda $9C00,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $A400,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $AC00,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $B400,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $BC00,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $C400,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $CC00,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $D400,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	jsr NextAddressRow
 
 	lda $9C00,x		; line 1, byte 0
-	sta data
 	jsr WriteData
 	lda $A400,x		; line 1, byte 1
-	sta data
 	jsr WriteData
 	lda $AC00,x		; line 1, byte 2
-	sta data
 	jsr WriteData
 	lda $B400,x		; line 1, byte 3
-	sta data
 	jsr WriteData
 	lda $BC00,x		; line 1, byte 4
-	sta data
 	jsr WriteData
 	lda $C400,x		; line 1, byte 5
-	sta data
 	jsr WriteData
 	lda $CC00,x		; line 1, byte 6
-	sta data
 	jsr WriteData
 	lda $D400,x		; line 1, byte 7
-	sta data
 	jsr WriteData
 	
 	.byte #$FA ; plx
