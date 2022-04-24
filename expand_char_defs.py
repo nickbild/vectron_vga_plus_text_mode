@@ -949,7 +949,10 @@ def processLine(defs, loc, newLoc, byteNumber):
 def parseByte(line, byteNumber):
     line = line.replace("	.byte #%", "")
     pos = 7 - byteNumber
-    print("	.byte #$0{0}".format(line[pos]))
+    pixel_value = "#$1F"
+    if line[pos] == "0":
+        pixel_value = "#$18"
+    print("	.byte {0}".format(pixel_value))
 
     return
 
