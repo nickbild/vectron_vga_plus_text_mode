@@ -492,6 +492,43 @@ DrawCharacterLines
 
 	; Get offset to first byte (horizontal line) of character in ROM, then retrieve character code.
 
+	; Line 8 - move line 8 1st to make the empty seperator row on top.
+	lda $9C00,x		; line 1, byte 0
+	jsr WriteData
+	lda $A400,x		; line 1, byte 1
+	jsr WriteData
+	lda $AC00,x		; line 1, byte 2
+	jsr WriteData
+	lda $B400,x		; line 1, byte 3
+	jsr WriteData
+	lda $BC00,x		; line 1, byte 4
+	jsr WriteData
+	lda $C400,x		; line 1, byte 5
+	jsr WriteData
+	lda $CC00,x		; line 1, byte 6
+	jsr WriteData
+	lda $D400,x		; line 1, byte 7
+	jsr WriteData
+	jsr NextAddressRow
+
+	lda $9C00,x		; line 1, byte 0
+	jsr WriteData
+	lda $A400,x		; line 1, byte 1
+	jsr WriteData
+	lda $AC00,x		; line 1, byte 2
+	jsr WriteData
+	lda $B400,x		; line 1, byte 3
+	jsr WriteData
+	lda $BC00,x		; line 1, byte 4
+	jsr WriteData
+	lda $C400,x		; line 1, byte 5
+	jsr WriteData
+	lda $CC00,x		; line 1, byte 6
+	jsr WriteData
+	lda $D400,x		; line 1, byte 7
+	jsr WriteData
+	jsr NextAddressRow
+
 	; Line 1
 	lda $9500,x		; line 1, byte 0
 	jsr WriteData
@@ -749,43 +786,6 @@ DrawCharacterLines
 	lda $CB00,x		; line 1, byte 6
 	jsr WriteData
 	lda $D300,x		; line 1, byte 7
-	jsr WriteData
-	jsr NextAddressRow
-
-	; Line 8
-	lda $9C00,x		; line 1, byte 0
-	jsr WriteData
-	lda $A400,x		; line 1, byte 1
-	jsr WriteData
-	lda $AC00,x		; line 1, byte 2
-	jsr WriteData
-	lda $B400,x		; line 1, byte 3
-	jsr WriteData
-	lda $BC00,x		; line 1, byte 4
-	jsr WriteData
-	lda $C400,x		; line 1, byte 5
-	jsr WriteData
-	lda $CC00,x		; line 1, byte 6
-	jsr WriteData
-	lda $D400,x		; line 1, byte 7
-	jsr WriteData
-	jsr NextAddressRow
-
-	lda $9C00,x		; line 1, byte 0
-	jsr WriteData
-	lda $A400,x		; line 1, byte 1
-	jsr WriteData
-	lda $AC00,x		; line 1, byte 2
-	jsr WriteData
-	lda $B400,x		; line 1, byte 3
-	jsr WriteData
-	lda $BC00,x		; line 1, byte 4
-	jsr WriteData
-	lda $C400,x		; line 1, byte 5
-	jsr WriteData
-	lda $CC00,x		; line 1, byte 6
-	jsr WriteData
-	lda $D400,x		; line 1, byte 7
 	jsr WriteData
 	
 	.byte #$FA ; plx
